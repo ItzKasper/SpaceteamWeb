@@ -481,7 +481,7 @@ function getTask(socket, roomID){
 	}
 }
 
-/*process.on('uncaughtException', function(err, lineNumber){
+process.on('uncaughtException', function(err, lineNumber){
 	console.log("Caught exception: " + err);
 	console.log("Line number: " + lineNumber);
-});*/
+});
