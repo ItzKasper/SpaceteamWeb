@@ -1,0 +1,257 @@
+body {
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	font-family: orbitron;
+	font-weight: 700;
+	font-size: 3.5vh;
+	color: #d5d5d5;
+	background-color: gray;
+}
+
+.row {
+	width: 100vw;
+}
+
+#startScreen{
+	/*Vertical center*/
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+#startScreen .row {
+	margin: 5px 0;
+}
+
+button, input {
+	width: 100%;
+	font-weight: 700;
+	font-size: 3.5vw;
+}
+
+input::placeholder {
+	color: #d1d1d1;
+}
+
+#roomID {
+	font-size: 10vw;
+	color: #0050d3;
+}
+
+#playerCount {
+	font-size: 5vw;
+	margin-top: -20px;
+}
+
+#waitingScreen {
+	width: 100vw;
+	max-width: 100vw;
+}
+
+#waitingScreen button {
+	margin: 10px;
+}
+
+#playScreen {
+	height: 100vh;
+	width: 100vw;
+}
+
+#playScreen .row {
+	margin: 0;
+}
+
+#playScreen h1 {
+	font-size: 1.6em;
+	margin-top: 1.4vh;
+}
+
+#totalCompleted {
+	color: #236421;
+}
+
+#totalFailed {
+	color: #b21b17;
+}
+
+#masterHealth, #playerHealth {
+	width: 100%;
+	height: 6vh;
+	margin: 2vh auto;
+	padding: 5px 5px;
+	background-color: #222222;
+}
+
+#masterHealth div, #playerHealth div {
+	width: 100%;
+	height: 100%;
+	background-color: #666666;
+}
+
+#masterHealth p, #playerHealth p {
+	position: absolute;
+	margin: 0 auto;
+	left: 0;
+	right: 0;
+	top: 25%;
+}
+
+#taskMSG {
+	color: #222222;
+	height: 6vh;
+}
+
+.boardElement {
+	background-color: #222222;
+	height: 35vh;
+	padding: 5px 5px 5px 5px;
+	border: 1px solid #666666;
+}
+
+.boardElement div p {
+	font-size: 1.8vw;
+}
+
+.toggleSwitchImg {
+	width: 90%;
+	max-width: 45vh;
+	height: auto;
+	max-height: 45vh;
+	margin: 0 auto;
+	margin-top: 5px;
+}
+
+.toggleSwitchImg:hover, .buttonImg:hover{
+	cursor: pointer;
+	opacity: 0.5;
+}
+
+.buttonImg {
+	width: 90%;
+	max-width: 22vh;
+	height: 90%;
+	max-height: 22vh;
+	margin: 0 auto;
+}
+
+input[type=range] {
+	width: 85%;
+	height: 5vh;
+	margin: 0 auto;
+	-webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+	background: transparent; /* Otherwise white in chrome */
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+}
+
+input[type=range]:focus {
+  outline: none; /* Removes the blue border. You should probably do some kind of focus styling for accessibility reasons though. */
+}
+
+input[type=range]::-ms-track {
+  width: 100%;
+  cursor: pointer;
+
+  /* Hides the slider so custom styles can be added */
+  background: transparent; 
+  border-color: transparent;
+  color: transparent;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  border: 1px solid #d5d5d5;
+  height: 5vh;
+  width: 20px;
+  border-radius: 3px;
+  background: #666666;
+  cursor: pointer;
+  margin-top: -2vh; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d; /* Add cool effects to your sliders! */
+}
+
+/* All the same stuff for Firefox */
+input[type=range]::-moz-range-thumb {
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  border: 1px solid #d5d5d5
+  height: 5vh;
+  width: 20px;
+  border-radius: 3px;
+  background: #666666;
+  cursor: pointer;
+}
+
+/* All the same stuff for IE */
+input[type=range]::-ms-thumb {
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  border: 1px solid #d5d5d5;
+  height: 5vh;
+  width: 20px;
+  border-radius: 3px;
+  background: #666666;
+  cursor: pointer;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 8.4px;
+  cursor: pointer;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  background: #3071a9;
+  border-radius: 1.3px;
+  border: 0.2px solid #010101;
+}
+
+input[type=range]:focus::-webkit-slider-runnable-track {
+  background: #367ebd;
+}
+
+input[type=range]::-moz-range-track {
+  width: 100%;
+  height: 4vh;
+  cursor: pointer;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  background: #3071a9;
+  border-radius: 1.3px;
+  border: 0.2px solid #010101;
+}
+
+input[type=range]::-ms-track {
+  width: 100%;
+  height: 8.4px;
+  cursor: pointer;
+  background: transparent;
+  border-color: transparent;
+  border-width: 16px 0;
+  color: transparent;
+}
+input[type=range]::-ms-fill-lower {
+  background: #2a6495;
+  border: 0.2px solid #010101;
+  border-radius: 2.6px;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+}
+input[type=range]:focus::-ms-fill-lower {
+  background: #3071a9;
+}
+input[type=range]::-ms-fill-upper {
+  background: #3071a9;
+  border: 0.2px solid #010101;
+  border-radius: 2.6px;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+}
+input[type=range]:focus::-ms-fill-upper {
+  background: #367ebd;
+}
+
+.markers {
+	width: 100%;
+	table-layout: fixed;
+}
+
+
+
+
