@@ -135,10 +135,13 @@ io.sockets.on('connection', function(socket){
 				var taskCompleted = checkTask(roomID, i.id, i.state);	//Check if a task is completed by doing this, if yes, it returns the index of that task
 				if(taskCompleted !== false){
 					ROOM_LIST[roomID].totalCompleted += 1;
+
+					var task = ROOM_LIST[roomID].tasks[taskCompleted];
+					var targetSocket = SOCKET_LIST[task.owner];
 					ROOM_LIST[roomID].tasks.splice(taskCompleted, 1);
-					var newTask = createTask(socket, roomID);
+					var newTask = createTask(targetSocket, roomID);
 					ROOM_LIST[roomID].tasks.push(newTask);
-					socket.emit('newTask', newTask);
+					targetSocket.emit('newTask', newTask);
 				}else{
 					ROOM_LIST[roomID].totalFailed += 1;
 				}
@@ -155,10 +158,14 @@ io.sockets.on('connection', function(socket){
 				var taskCompleted = checkTask(roomID, i.id, i.state); //see toggleswitchpress
 				if(taskCompleted !== false){;
 					ROOM_LIST[roomID].totalCompleted += 1;
+
+					var task = ROOM_LIST[roomID].tasks[taskCompleted];	//Get the socket of the tasks owner
+					var targetSocket = SOCKET_LIST[task.owner];
+
 					ROOM_LIST[roomID].tasks.splice(taskCompleted, 1);
-					var newTask = createTask(socket, roomID);
+					var newTask = createTask(targetSocket, roomID);
 					ROOM_LIST[roomID].tasks.push(newTask);
-					socket.emit('newTask', newTask);
+					targetSocket.emit('newTask', newTask);
 				}else{
 					ROOM_LIST[roomID].totalFailed += 1;
 				}
@@ -176,10 +183,14 @@ io.sockets.on('connection', function(socket){
 				var taskCompleted = checkTask(roomID, i.id, i.state);
 				if(taskCompleted !== false){
 					ROOM_LIST[roomID].totalCompleted += 1;
+
+					var task = ROOM_LIST[roomID].tasks[taskCompleted];
+					var targetSocket = SOCKET_LIST[task.owner];
+
 					ROOM_LIST[roomID].tasks.splice(taskCompleted, 1);
-					var newTask = createTask(socket, roomID);
+					var newTask = createTask(targetSocket, roomID);
 					ROOM_LIST[roomID].tasks.push(newTask);
-					socket.emit('newTask', newTask);
+					targetSocket.emit('newTask', newTask);
 				}else{
 					ROOM_LIST[roomID].totalFailed += 1;
 				}
@@ -404,10 +415,9 @@ function checkTask(roomID, elementID, currentState){
 		var task = tasks[j];
 		if(task.elementID === elementID && task.requiredState == currentState){ //If the task id and the required state match the task is completed
 			return j; //Return the index of the task
-		}else{
-			return false;
 		}
 	};
+	return false;
 }
 
 function getBoardData(socket){

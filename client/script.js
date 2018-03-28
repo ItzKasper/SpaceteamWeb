@@ -76,6 +76,7 @@ function leaveRoom(){
     socket.emit('leaveRoom');
     $('#startScreen').show();   //Shows the startscreen and hides the waitingscreen
     $('#waitingScreen').hide();
+    $('#startGameBTN').hide();
     $('#roomID').text("PIZZA"); //Change the text to the room ID
 }
 
