@@ -118,7 +118,9 @@ io.sockets.on('connection', function(socket){
 	socket.on('startGame', function(){
 		var roomID = PLAYER_DATA[socket.id].room;
 		if(socket.id === ROOM_LIST[roomID].host){ //If the player is indeed the host (they didn't do some client side tinkering)
-			startGame(roomID);
+			ROOM_LIST[roomID].level = 1;
+			levelTransition(roomID, 1);
+			setTimeout(startGame, 3000, roomID); //(functionName, delay in ms, arguments for function)
 		}else{
 			var errorMessage = "You aren't the host!";
 			socket.emit('alert', errorMessage);
@@ -135,6 +137,7 @@ io.sockets.on('connection', function(socket){
 				var taskCompleted = checkTask(roomID, i.id, i.state);	//Check if a task is completed by doing this, if yes, it returns the index of that task
 				if(taskCompleted !== false){
 					ROOM_LIST[roomID].totalCompleted += 1;
+					ROOM_LIST[roomID].masterHealth += 10;
 
 					var task = ROOM_LIST[roomID].tasks[taskCompleted];
 					var targetSocket = SOCKET_LIST[task.owner];
@@ -144,6 +147,7 @@ io.sockets.on('connection', function(socket){
 					targetSocket.emit('newTask', newTask);
 				}else{
 					ROOM_LIST[roomID].totalFailed += 1;
+					ROOM_LIST[roomID].masterHealth -= 10;
 				}
 			}
 		});
@@ -158,6 +162,7 @@ io.sockets.on('connection', function(socket){
 				var taskCompleted = checkTask(roomID, i.id, i.state); //see toggleswitchpress
 				if(taskCompleted !== false){;
 					ROOM_LIST[roomID].totalCompleted += 1;
+					ROOM_LIST[roomID].masterHealth += 10;
 
 					var task = ROOM_LIST[roomID].tasks[taskCompleted];	//Get the socket of the tasks owner
 					var targetSocket = SOCKET_LIST[task.owner];
@@ -168,6 +173,7 @@ io.sockets.on('connection', function(socket){
 					targetSocket.emit('newTask', newTask);
 				}else{
 					ROOM_LIST[roomID].totalFailed += 1;
+					ROOM_LIST[roomID].masterHealth -= 10;
 				}
 			}
 		});
@@ -183,6 +189,7 @@ io.sockets.on('connection', function(socket){
 				var taskCompleted = checkTask(roomID, i.id, i.state);
 				if(taskCompleted !== false){
 					ROOM_LIST[roomID].totalCompleted += 1;
+					ROOM_LIST[roomID].masterHealth += 10;
 
 					var task = ROOM_LIST[roomID].tasks[taskCompleted];
 					var targetSocket = SOCKET_LIST[task.owner];
@@ -193,6 +200,7 @@ io.sockets.on('connection', function(socket){
 					targetSocket.emit('newTask', newTask);
 				}else{
 					ROOM_LIST[roomID].totalFailed += 1;
+					ROOM_LIST[roomID].masterHealth -= 10;
 				}
 				i.state = 0;
 			}
@@ -218,9 +226,10 @@ function createRoomId(socket){
 			
 			ROOM_LIST[rNumber] = { //Create a room and add the host to the players array
 				host: socket.id,
-				masterHealth: 100,
+				masterHealth: 50,
 				players: [],
 				state: "Waiting",
+				level: null,
 				boardData: [],
 				tasks: [],
 				totalCompleted: 0,
@@ -265,11 +274,20 @@ function startGame(roomID){
 		if(ROOM_LIST[roomID] == null){ //If the room doesn't exist anymore
 			clearInterval(this);
 		}else{
+			updateHealth(roomID, this); //pass this (loop) with it to clear it if level is over
 			sendData(roomID);
 		}
 	}, 1000/25); //This is stupid...
 
 	ROOM_LIST[roomID].state = "Playing";
+}
+
+function levelTransition(roomID, newLevel){
+	var players = getPlayersFromRoom(roomID);
+	players.forEach(function(i){
+		var socket = SOCKET_LIST[i];
+		socket.emit('newLevel', newLevel);
+	});
 }
 
 function updatePlayerCount(roomID, newPlayerCount){
@@ -281,7 +299,8 @@ function updatePlayerCount(roomID, newPlayerCount){
 }
 
 function getPlayersFromRoom(roomID){
-	return ROOM_LIST[roomID].players; //The array that contains all the players in that room
+	return ROOM_LIST[roomID].players; 
+	//The array that contains all the players in that room
 }
 
 
@@ -405,6 +424,7 @@ function taskFailed(roomID, tasks, task){
 			socket.emit('newTask', newTask);
 
 			ROOM_LIST[roomID].totalFailed += 1;
+			ROOM_LIST[roomID].masterHealth -= 5;
 		}
 	}
 }
@@ -429,7 +449,6 @@ function getBoardData(socket){
 }
 
 function sendData(roomID){
-	updateHealth(roomID);
 
 	var array = getPlayersFromRoom(roomID);
 	array.forEach(function(i){	//Cycle through all the players
@@ -449,17 +468,32 @@ function sendData(roomID){
 	});
 };
 
-function updateHealth(roomID){
-	var masterHealth = ROOM_LIST[roomID].masterHealth; 
-	ROOM_LIST[roomID].masterHealth = masterHealth - 0.1;
+function updateHealth(roomID, gameLoop){
 
 	var tasks = ROOM_LIST[roomID].tasks;
 	tasks.forEach(function(i){	//Playerhealth
 		if(i.health <= 0){
 			taskFailed(roomID, tasks, i);
 		}
-		i.health = i.health - 0.5;
+		i.health = i.health - 0.5 * Math.sqrt(ROOM_LIST[roomID].level);
 	});
+
+	var masterHealth = ROOM_LIST[roomID].masterHealth;
+	if(masterHealth >= 100){
+		clearInterval(gameLoop);
+		ROOM_LIST[roomID].masterHealth = 50;
+		ROOM_LIST[roomID].level += 1;
+		console.log(ROOM_LIST[roomID].level)
+		resetBoards(roomID);
+		var level = ROOM_LIST[roomID].level;
+		levelTransition(roomID, level);
+		setTimeout(startGame, 3000, roomID);
+	}
+}
+
+function resetBoards(roomID){
+	ROOM_LIST[roomID].boardData = [];
+	ROOM_LIST[roomID].tasks = [];
 }
 
 function getPlayerHealth(socketID, roomID){
@@ -491,7 +525,7 @@ function getTask(socket, roomID){
 	}
 }
 
-process.on('uncaughtException', function(err, lineNumber){
+/*process.on('uncaughtException', function(err, lineNumber){
 	console.log("Caught exception: " + err);
 	console.log("Line number: " + lineNumber);
-});
+});*/

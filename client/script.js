@@ -4,6 +4,7 @@ $(document).ready(function() {
 	socket = io();
 
     $('#waitingScreen').hide(); //Hides the waitingscreen
+    $('#transitionScreen').hide();
     $('#playScreen').hide(); //Hides the playscreen
     $('#startGameBTN').hide(); //Hides the start game button, shows it again if host
 
@@ -19,8 +20,17 @@ $(document).ready(function() {
     });
 
     socket.on('startGame', function(){
-        $('#waitingScreen').hide();
+        console.log("START");
+        $('#transitionScreen').hide();
         $('#playScreen').show();
+    });
+
+    socket.on('newLevel', function(newLevel){
+        $('#playScreen').hide();
+        $('#waitingScreen').hide();
+        $('#transitionScreen').show();
+        console.log("NEW LEVEL: " + newLevel)
+        $('#transitionScreen div div p').text("Level " + newLevel);
     });
 
     socket.on('newPlayerCount', function(newPlayerCount){
@@ -112,6 +122,9 @@ function updateMasterHealth(newHealth){
     if(newHealth < 0){
         $("#masterHealth div").width("0%");
         $("#masterHealthTXT").text("0%");
+    }else if(newHealth > 100){
+        $("#masterHealth div").width("100%");
+        $("#masterHealthTXT").text("100%");
     }else{
         $("#masterHealth div").width(newHealth + "%");
         $("#masterHealthTXT").text(Math.round(newHealth) + "%");
@@ -122,6 +135,9 @@ function updatePlayerHealth(newHealth){
     if(newHealth < 0){
         $("#playerHealth div").width("0%");
         $("#playerHealthTXT").text("0%");
+    }else if(newHealth > 100){
+        $("#playerHealth div").width("100%");
+        $("#playerHealthTXT").text("100%");
     }else{
         $("#playerHealth div").width(newHealth + "%");
         $("#playerHealthTXT").text(Math.round(newHealth) + "%");

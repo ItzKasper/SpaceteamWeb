@@ -53,6 +53,13 @@ input::placeholder {
 	margin: 10px;
 }
 
+#transitionScreen div div p {
+	font-size: 15vw;
+	max-width: 80vw;
+	max-height: 80vh;
+	margin: 0 auto;
+}
+
 #playScreen {
 	height: 100vh;
 	width: 100vw;
