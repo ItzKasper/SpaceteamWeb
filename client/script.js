@@ -42,9 +42,9 @@ $(document).ready(function() {
         for(var i=0;i<newBoard.length;i++){ //Cycle through all the elements
             var element = newBoard[i];
             if(element.type === "switch"){ //If type
-                $('#element' + (i+1)).html('<div><p>' + element.displayName + '</p><img src="/client/img/toggleSwitchOff.png" class="img-responsive toggleSwitchImg" onClick=\'toggleSwitchPress("' + element.id + '", this.id)\' onTouchEnd=\'toggleSwitchPress("' + element.id + '", this.id);\' id="ts_' + element.id + '"/></div>');
+                $('#element' + (i+1)).html('<div><p>' + element.displayName + '</p><img src="/client/img/toggleSwitchOff.png" class="img-responsive toggleSwitchImg" onClick=\'toggleSwitchPress("' + element.id + '", this.id)\' ' /*onTouchEnd=\'toggleSwitchPress("' + element.id + '", this.id);\''*/ + ' id="ts_' + element.id + '"/></div>');
             }else if(element.type === "button"){
-                $('#element' + (i+1)).html('<div><p>' + element.displayName + '</p><img src="/client/img/button.png" class="img-responsive buttonImg" onclick=\'buttonPress("' + element.id + '");\' ontouchend=\'buttonPress("' + element.id + '");\'></div>');
+                $('#element' + (i+1)).html('<div><p>' + element.displayName + '</p><img src="/client/img/button.png" class="img-responsive buttonImg" onclick=\'buttonPress("' + element.id + '");\''/* ontouchend=\'buttonPress("' + element.id + '");\'*/ + '></div>');
             }else if(element.type === "slider"){
                 var sliderMarkers = null; //The markers beneath the slider
                 for(var j=0;j<element.options;j++){
