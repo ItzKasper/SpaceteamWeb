@@ -376,7 +376,7 @@ function createTask(socket, roomID){
 }
 
 function taskFailed(roomID, tasks, task){
-	for(var j=0;j<tasks.length;j++){
+	for(var j=0;j<tasks.length;j++){//Get the task index
 		if(task.owner === tasks[j].owner){
 			ROOM_LIST[roomID].tasks.splice(j, 1); //Remove the task from the task list
 
@@ -385,8 +385,9 @@ function taskFailed(roomID, tasks, task){
 			ROOM_LIST[roomID].tasks.push(newTask);
 			socket.emit('newTask', newTask);
 
-			ROOM_LIST[roomID].totalFailed += 1;
+			ROOM_LIST[roomID].totalFailed += 5;
 			ROOM_LIST[roomID].masterHealth -= 5;
+			break;	//If this isn't here it will fail it twice and I have absolutely no clue why (only if there's more than one player connected, amount doesn't matter as long as it's higher than 1 for some apparent reason)
 		}
 	}
 }
@@ -436,8 +437,9 @@ function updateHealth(roomID, gameLoop){
 	tasks.forEach(function(i){	//Playerhealth
 		if(i.health <= 0){
 			taskFailed(roomID, tasks, i);
+		}else{
+			i.health = i.health - 0.5 * Math.sqrt(ROOM_LIST[roomID].level);
 		}
-		i.health = i.health - 0.5 * Math.sqrt(ROOM_LIST[roomID].level);
 	});
 
 	var masterHealth = ROOM_LIST[roomID].masterHealth;
