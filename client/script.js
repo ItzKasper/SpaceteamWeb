@@ -6,6 +6,7 @@ $(document).ready(function() {
     $('#waitingScreen').hide(); //Hides the waitingscreen
     $('#transitionScreen').hide();
     $('#playScreen').hide(); //Hides the playscreen
+    $('#gameOverScreen').hide();
     $('#startGameBTN').hide(); //Hides the start game button, shows it again if host
 
     socket.on('newRoomID', function(roomID){
@@ -61,13 +62,20 @@ $(document).ready(function() {
 
     socket.on('newTask', function(newTask){
         console.log(newTask);
-        $('#taskMSG').text(newTask.taskMSG);
+        console.log(taskMSG);
+        $('#taskMSG').html((newTask.taskMSG).replace("<wbr>", ""));
     })
 
     socket.on('newPlayerData', function(data){
         updateMasterHealth(data.masterHealth);
         updatePlayerHealth(data.playerHealth);
         updateCounters(data.totalCompleted, data.totalFailed);
+    });
+
+    socket.on('gameOver', function(){
+        console.log("GAMEOVER");
+        $('#playScreen').hide();
+        $('#gameOverScreen').show();
     });
 
 });
@@ -87,6 +95,7 @@ function leaveRoom(){
     $('#startScreen').show();   //Shows the startscreen and hides the waitingscreen
     $('#waitingScreen').hide();
     $('#startGameBTN').hide();
+    $('#gameOverScreen').hide();
     $('#roomID').text("PIZZA"); //Change the text to the room ID
 }
 
@@ -95,7 +104,12 @@ function startGame(){
 }
 
 function toggleSwitchPress(switchID, element){
-    socket.emit('toggleSwitchPress', switchID); //For the server to register
+    var self = {
+        id: switchID
+    }
+
+    socket.emit('elementChange', self);
+
     socket.emit('requestState', switchID);  //Register the current state of the switch after it has changed
     socket.once('requestReply', function(currentState){ //change the direction of the switch depending on the state
         if(currentState == false){
@@ -107,7 +121,11 @@ function toggleSwitchPress(switchID, element){
 }
 
 function buttonPress(buttonID, element){
-    socket.emit('buttonPress', buttonID);
+    var self = {
+        id: buttonID
+    }
+
+    socket.emit('elementChange', self);
 }
 
 function sliderChange(sliderID, newValue){
@@ -115,7 +133,7 @@ function sliderChange(sliderID, newValue){
         id: sliderID,
         value: newValue
     }
-    socket.emit('sliderChange', self);
+    socket.emit('elementChange', self);
 }
 
 function updateMasterHealth(newHealth){

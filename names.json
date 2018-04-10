@@ -52,19 +52,31 @@
 		{"displayName": "MAND", "id": "mand"},
 		{"displayName": "Module", "id": "module"},
 		{"displayName": "Versneller", "id": "versneller"},
-		{"displayName": "1", "id": "1"},
-		{"displayName": "2", "id": "2"},
-		{"displayName": "3", "id": "3"},
-		{"displayName": "4", "id": "4"},
-		{"displayName": "5", "id": "5"},
-		{"displayName": "6", "id": "6"},
-		{"displayName": "7", "id": "7"},
-		{"displayName": "8", "id": "8"},
-		{"displayName": "9", "id": "9"},
-		{"displayName": "10", "id": "10"}
+		{"displayName": "Gootsteen", "id": "gootsteen"},
+		{"displayName": "Navigatie<wbr>licht", "id": "navigatielicht"},
+		{"displayName": "Koffiezet<wbr>machine", "id": "koffiezetmachine"},
+		{"displayName": "Hologram", "id": "hologram"},
+		{"displayName": "Steenoven", "id": "steenoven"},
+		{"displayName": "Monitor", "id": "monitor"},
+		{"displayName": "Simulatie", "id": "simulatie"},
+		{"displayName": "Computer", "id": "computer"},
+		{"displayName": "Audio", "id": "audio"},
+		{"displayName": "Luchtpoort", "id": "luchtpoort"}
 	], 
   "en": [
-    {"displayName": "Stoffer", "id": "stoffer"},
-	{"displayName": "Plannen", "id": "plannen"}
+	    {"displayName": "Subputty", "id": "subputty"},
+		{"displayName": "Macrodryer", "id": "Spectrobolt"},
+		{"displayName": "Frustration", "id": "frustration"},
+		{"displayName": "Primecrown <wbr>Register", "id": "primecrown_register"},
+		{"displayName": "Pulsing <wbr>Ribbontrellis", "id": "pulsing_ribbontrellis"},
+		{"displayName": "Universal <wbr>Paddle", "id": "universal_paddle"},
+		{"displayName": "Radio<wbr>cortex", "id": "radiocortex"},
+		{"displayName": "Darkbucket", "id": "darkbucket"},
+		{"displayName": "Flexible <wbr>Steamprobe", "id": "flexible_steamprobe"},
+		{"displayName": "Idiosyncratic <wbr>Photocontrol", "id": "iodiosycratic_photocontrol"},
+		{"displayName": "Beeping <wbr>Trapezold", "id": "beeping_trapezold"},
+		{"displayName": "Helioscissor <wbr>Scanner", "id": "helioscissor_scanner"},
+		{"displayName": "Superframe", "id": "superframe"},
+		{"displayName": "Polar <wbr>Wave", "id": "polar_wave"}
     ]
   }

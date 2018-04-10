@@ -49,11 +49,11 @@ input::placeholder {
 	max-width: 100vw;
 }
 
-#waitingScreen button {
+#waitingScreen button, #gameOverScreen button {
 	margin: 10px;
 }
 
-#transitionScreen div div p {
+#transitionScreen div div p, #gameOverScreen div div p {
 	font-size: 15vw;
 	max-width: 80vw;
 	max-height: 80vh;

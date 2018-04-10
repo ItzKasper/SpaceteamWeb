@@ -127,39 +127,25 @@ io.sockets.on('connection', function(socket){
 		}
 	});
 
-	socket.on('toggleSwitchPress', function(elementID){
-		var array = getBoardData(socket); //Get all the elements from the room the players in
+	socket.on('elementChange', function(data){
+
+		var elementID = data.id; 
 		var roomID = PLAYER_DATA[socket.id].room;
 
-		array.forEach(function(i){	//Cycle through them (i is the element object)
-			if(i.id == elementID){ //If the given elementID matches with the id of that object
-				i.state = !i.state; //Change the state
-				var taskCompleted = checkTask(roomID, i.id, i.state);	//Check if a task is completed by doing this, if yes, it returns the index of that task
-				if(taskCompleted !== false){
-					ROOM_LIST[roomID].totalCompleted += 1;
-					ROOM_LIST[roomID].masterHealth += 10;
+		var elements = ROOM_LIST[roomID].boardData;
+		elements.forEach(function(i){
+			if(i.id === elementID){
 
-					var task = ROOM_LIST[roomID].tasks[taskCompleted];
-					var targetSocket = SOCKET_LIST[task.owner];
-					ROOM_LIST[roomID].tasks.splice(taskCompleted, 1);
-					var newTask = createTask(targetSocket, roomID);
-					ROOM_LIST[roomID].tasks.push(newTask);
-					targetSocket.emit('newTask', newTask);
-				}else{
-					ROOM_LIST[roomID].totalFailed += 1;
-					ROOM_LIST[roomID].masterHealth -= 10;
+				var elementType = i.type;
+				if(elementType === "button"){
+					i.state = 1;
+				}else if(elementType === "switch"){
+					i.state = !i.state;
+				}else if(elementType === "slider"){
+					i.state = data.value;
 				}
-			}
-		});
-	});
 
-	socket.on('sliderChange', function(data){
-		var array = getBoardData(socket); //Get all the elements from the room the player's in
-		var roomID = PLAYER_DATA[socket.id].room;
-		array.forEach(function(i){
-			if(i.id == data.id){
-				i.state = data.value;	//Set the state equal to the new value
-				var taskCompleted = checkTask(roomID, i.id, i.state); //see toggleswitchpress
+				var taskCompleted = checkTask(roomID, i.id, i.state); //Check if task is completed
 				if(taskCompleted !== false){;
 					ROOM_LIST[roomID].totalCompleted += 1;
 					ROOM_LIST[roomID].masterHealth += 10;
@@ -175,37 +161,14 @@ io.sockets.on('connection', function(socket){
 					ROOM_LIST[roomID].totalFailed += 1;
 					ROOM_LIST[roomID].masterHealth -= 10;
 				}
-			}
-		});
-	});
 
-	socket.on('buttonPress', function(elementID){
-		var array = getBoardData(socket);
-		var roomID = PLAYER_DATA[socket.id].room;
-
-		array.forEach(function(i){
-			if(i.id == elementID){
-				i.state = 1;
-				var taskCompleted = checkTask(roomID, i.id, i.state);
-				if(taskCompleted !== false){
-					ROOM_LIST[roomID].totalCompleted += 1;
-					ROOM_LIST[roomID].masterHealth += 10;
-
-					var task = ROOM_LIST[roomID].tasks[taskCompleted];
-					var targetSocket = SOCKET_LIST[task.owner];
-
-					ROOM_LIST[roomID].tasks.splice(taskCompleted, 1);
-					var newTask = createTask(targetSocket, roomID);
-					ROOM_LIST[roomID].tasks.push(newTask);
-					targetSocket.emit('newTask', newTask);
-				}else{
-					ROOM_LIST[roomID].totalFailed += 1;
-					ROOM_LIST[roomID].masterHealth -= 10;
+				if(elementType === "button"){
+					i.state = 0;
 				}
-				i.state = 0;
 			}
 		});
-	})
+
+	});
 
 	socket.on('requestState', function(elementID){
 		var array = getBoardData(socket); //Get all the elements from the room the players in
@@ -346,7 +309,6 @@ function generateBoard(socket, roomID){
 
 function generateName(roomID){
 	var array = names.nl; //Get all the dutch names
-
 	while(true){
 
 		var rNumber = Math.floor(Math.random() * array.length); //Generate a random number 
@@ -481,13 +443,25 @@ function updateHealth(roomID, gameLoop){
 	var masterHealth = ROOM_LIST[roomID].masterHealth;
 	if(masterHealth >= 100){
 		clearInterval(gameLoop);
+
 		ROOM_LIST[roomID].masterHealth = 50;
 		ROOM_LIST[roomID].level += 1;
-		console.log(ROOM_LIST[roomID].level)
+
 		resetBoards(roomID);
 		var level = ROOM_LIST[roomID].level;
+
 		levelTransition(roomID, level);
 		setTimeout(startGame, 3000, roomID);
+	}else if(masterHealth <= 0){
+		clearInterval(gameLoop);
+
+		var players = getPlayersFromRoom(roomID);
+		players.forEach(function(p){
+			var socket = SOCKET_LIST[p];
+			socket.emit('gameOver');
+		});
+
+		//ROOM_LIST[roomID] = null;
 	}
 }
 
@@ -523,6 +497,16 @@ function getTask(socket, roomID){
 			return tasks[k];
 		}
 	}
+}
+
+function getElementType(roomID, elementID){
+	var room = ROOM_LIST[roomID];
+	var boardData = room.boardData;
+	boardData.forEach(function(k){
+		if(elementID === k.id){
+			return k.type;
+		}
+	});
 }
 
 process.on('uncaughtException', function(err, lineNumber){
