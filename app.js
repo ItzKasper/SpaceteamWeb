@@ -23,6 +23,24 @@ var ROOM_LIST = []; //Used to store all the rooms
 var SOCKET_LIST = []; //Used to store all the connection (used when sending/receiving data from specific connections)
 var PLAYER_DATA = {}; //Used to store all the players (all the player's data instead of the connection data)
 
+/*	EXAMPLE
+	ROOM_LIST[
+		12492: {
+			host: socket.id,
+			language: "nl",
+			masterHealth: 50,
+			players: [2291,254929],
+			state: "Waiting",
+			level: null,
+			boardData: [],
+			tasks: [],
+			totalCompleted: 0,
+			totalFailed: 0
+		}
+	]
+
+*/
+
 function createPlayer(id){
 
 	var self = { //Used to store all the players data
@@ -305,7 +323,6 @@ function generateBoard(socket, roomID){
 
 function generateName(roomID){
 	var array = eval("names." + ROOM_LIST[roomID].language); //Get all the dutch names
-	console.log(array);
 	while(true){
 
 		var rNumber = Math.floor(Math.random() * array.length); //Generate a random number 
@@ -434,7 +451,6 @@ function updateHealth(roomID, gameLoop){
 		if(i.health <= 0){
 			taskFailed(roomID, tasks, i);
 		}else{
-			console.log((1.5/(getPlayersFromRoom(roomID).length)) * Math.sqrt(ROOM_LIST[roomID].level));
 			i.health = i.health - (0.8/(getPlayersFromRoom(roomID).length)) * Math.sqrt(ROOM_LIST[roomID].level);
 		}
 	});
