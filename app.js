@@ -45,7 +45,7 @@ io.sockets.on('connection', function(socket){
 
 	createPlayer(socket.id);
 
-	//Ads an event listener for if the player disconnects
+	//Adds an event listener for if the player disconnects
 	socket.on('disconnect', function(){
 		leaveRoom(socket);
 
@@ -115,10 +115,13 @@ io.sockets.on('connection', function(socket){
 		}
 	});
 
-	socket.on('startGame', function(){
+	socket.on('startGame', function(lang){
 		var roomID = PLAYER_DATA[socket.id].room;
 		if(socket.id === ROOM_LIST[roomID].host){ //If the player is indeed the host (they didn't do some client side tinkering)
 			ROOM_LIST[roomID].level = 1;
+			if(lang === "nl" || lang === "en"){
+				ROOM_LIST[roomID].language = lang;
+			}
 			levelTransition(roomID, 1);
 			setTimeout(startGame, 3000, roomID); //(functionName, delay in ms, arguments for function)
 		}else{
@@ -146,9 +149,9 @@ io.sockets.on('connection', function(socket){
 				}
 
 				var taskCompleted = checkTask(roomID, i.id, i.state); //Check if task is completed
-				if(taskCompleted !== false){;
+				if(taskCompleted !== false){ //!== is needed instead of !taskCompleted because of != and !==
 					ROOM_LIST[roomID].totalCompleted += 1;
-					ROOM_LIST[roomID].masterHealth += 10;
+					ROOM_LIST[roomID].masterHealth += 5;
 
 					var task = ROOM_LIST[roomID].tasks[taskCompleted];	//Get the socket of the tasks owner
 					var targetSocket = SOCKET_LIST[task.owner];
@@ -159,7 +162,7 @@ io.sockets.on('connection', function(socket){
 					targetSocket.emit('newTask', newTask);
 				}else{
 					ROOM_LIST[roomID].totalFailed += 1;
-					ROOM_LIST[roomID].masterHealth -= 10;
+					ROOM_LIST[roomID].masterHealth -= 5;
 				}
 
 				if(elementType === "button"){
@@ -167,7 +170,6 @@ io.sockets.on('connection', function(socket){
 				}
 			}
 		});
-
 	});
 
 	socket.on('requestState', function(elementID){
@@ -189,6 +191,7 @@ function createRoomId(socket){
 			
 			ROOM_LIST[rNumber] = { //Create a room and add the host to the players array
 				host: socket.id,
+				language: "nl",
 				masterHealth: 50,
 				players: [],
 				state: "Waiting",
@@ -205,6 +208,14 @@ function createRoomId(socket){
 			return rNumber;
 		}
 	}
+}
+
+function updatePlayerCount(roomID, newPlayerCount){
+	var array = getPlayersFromRoom(roomID);
+	array.forEach(function(i){
+		var socket = SOCKET_LIST[i];
+		socket.emit('newPlayerCount', newPlayerCount);
+	})
 }
 
 function leaveRoom(socket){
@@ -253,20 +264,6 @@ function levelTransition(roomID, newLevel){
 	});
 }
 
-function updatePlayerCount(roomID, newPlayerCount){
-	var array = getPlayersFromRoom(roomID);
-	array.forEach(function(i){
-		var socket = SOCKET_LIST[i];
-		socket.emit('newPlayerCount', newPlayerCount);
-	})
-}
-
-function getPlayersFromRoom(roomID){
-	return ROOM_LIST[roomID].players; 
-	//The array that contains all the players in that room
-}
-
-
 function generateBoard(socket, roomID){
 
 	var newBoard = [];
@@ -304,11 +301,11 @@ function generateBoard(socket, roomID){
 	}
 
 	socket.emit('newBoard', newBoard); 
-
 }
 
 function generateName(roomID){
-	var array = names.nl; //Get all the dutch names
+	var array = eval("names." + ROOM_LIST[roomID].language); //Get all the dutch names
+	console.log(array);
 	while(true){
 
 		var rNumber = Math.floor(Math.random() * array.length); //Generate a random number 
@@ -335,7 +332,6 @@ function generateName(roomID){
 
 	}
 }
-
 
 function createTask(socket, roomID){
 	var elements = getBoardData(socket); //All the elements from the room the player's in
@@ -375,6 +371,17 @@ function createTask(socket, roomID){
 	return task;
 }
 
+function checkTask(roomID, elementID, currentState){
+	var tasks = ROOM_LIST[roomID].tasks;
+	for(var j=0;j<tasks.length;j++){
+		var task = tasks[j];
+		if(task.elementID === elementID && task.requiredState == currentState){ //If the task id and the required state match the task is completed
+			return j; //Return the index of the task
+		}
+	};
+	return false;
+}
+
 function taskFailed(roomID, tasks, task){
 	for(var j=0;j<tasks.length;j++){//Get the task index
 		if(task.owner === tasks[j].owner){
@@ -385,22 +392,11 @@ function taskFailed(roomID, tasks, task){
 			ROOM_LIST[roomID].tasks.push(newTask);
 			socket.emit('newTask', newTask);
 
-			ROOM_LIST[roomID].totalFailed += 5;
+			ROOM_LIST[roomID].totalFailed += 1;
 			ROOM_LIST[roomID].masterHealth -= 5;
 			break;	//If this isn't here it will fail it twice and I have absolutely no clue why (only if there's more than one player connected, amount doesn't matter as long as it's higher than 1 for some apparent reason)
 		}
 	}
-}
-
-function checkTask(roomID, elementID, currentState){
-	var tasks = ROOM_LIST[roomID].tasks;
-	for(var j=0;j<tasks.length;j++){
-		var task = tasks[j];
-		if(task.elementID === elementID && task.requiredState == currentState){ //If the task id and the required state match the task is completed
-			return j; //Return the index of the task
-		}
-	};
-	return false;
 }
 
 function getBoardData(socket){
@@ -438,7 +434,8 @@ function updateHealth(roomID, gameLoop){
 		if(i.health <= 0){
 			taskFailed(roomID, tasks, i);
 		}else{
-			i.health = i.health - 0.5 * Math.sqrt(ROOM_LIST[roomID].level);
+			console.log((1.5/(getPlayersFromRoom(roomID).length)) * Math.sqrt(ROOM_LIST[roomID].level));
+			i.health = i.health - (0.8/(getPlayersFromRoom(roomID).length)) * Math.sqrt(ROOM_LIST[roomID].level);
 		}
 	});
 
@@ -509,6 +506,11 @@ function getElementType(roomID, elementID){
 			return k.type;
 		}
 	});
+}
+
+function getPlayersFromRoom(roomID){
+	return ROOM_LIST[roomID].players; 
+	//The array that contains all the players in that room
 }
 
 process.on('uncaughtException', function(err, lineNumber){

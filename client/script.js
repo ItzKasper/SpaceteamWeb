@@ -1,4 +1,5 @@
 var socket;
+var currentLevel = 0;
 
 $(document).ready(function() {
 	socket = io();
@@ -10,10 +11,9 @@ $(document).ready(function() {
     $('#startGameBTN').hide(); //Hides the start game button, shows it again if host
 
     socket.on('newRoomID', function(roomID){
-        console.log('New room ID' + roomID);
         $('#startScreen').hide();   //Hides the startscreen and shows the waitingscreen
         $('#waitingScreen').show();
-        $('#roomID').text(roomID); //Change the text to the room ID
+        $('.roomID').text(roomID); //Change the text to the room ID
     });
 
     socket.on('alert', function(errorMessage){
@@ -21,17 +21,16 @@ $(document).ready(function() {
     });
 
     socket.on('startGame', function(){
-        console.log("START");
         $('#transitionScreen').hide();
         $('#playScreen').show();
     });
 
     socket.on('newLevel', function(newLevel){
+        currentLevel = newLevel;
         $('#playScreen').hide();
         $('#waitingScreen').hide();
         $('#transitionScreen').show();
-        console.log("NEW LEVEL: " + newLevel)
-        $('#transitionScreen div div p').text("Level " + newLevel);
+        $('#transitionScreen div div p').text("Sector " + newLevel);
     });
 
     socket.on('newPlayerCount', function(newPlayerCount){
@@ -39,13 +38,12 @@ $(document).ready(function() {
     });
 
     socket.on('newBoard', function(newBoard){
-        console.log(newBoard);
         for(var i=0;i<newBoard.length;i++){ //Cycle through all the elements
             var element = newBoard[i];
             if(element.type === "switch"){ //If type
                 $('#element' + (i+1)).html('<div><p>' + element.displayName + '</p><img src="/client/img/toggleSwitchOff.png" class="img-responsive toggleSwitchImg" onClick=\'toggleSwitchPress("' + element.id + '", this.id)\' ' /*onTouchEnd=\'toggleSwitchPress("' + element.id + '", this.id);\''*/ + ' id="ts_' + element.id + '"/></div>');
             }else if(element.type === "button"){
-                $('#element' + (i+1)).html('<div><p>' + element.displayName + '</p><img src="/client/img/button.png" class="img-responsive buttonImg" onclick=\'buttonPress("' + element.id + '");\''/* ontouchend=\'buttonPress("' + element.id + '");\'*/ + '></div>');
+                $('#element' + (i+1)).html('<div><p>' + element.displayName + '</p><img src="/client/img/button.png" class="img-responsive buttonImg" onClick=\'buttonPress("' + element.id + '");\''/* ontouchend=\'buttonPress("' + element.id + '");\'*/ + '></div>');
             }else if(element.type === "slider"){
                 var sliderMarkers = null; //The markers beneath the slider
                 for(var j=0;j<element.options;j++){
@@ -61,8 +59,6 @@ $(document).ready(function() {
     });
 
     socket.on('newTask', function(newTask){
-        console.log(newTask);
-        console.log(taskMSG);
         $('#taskMSG').html((newTask.taskMSG).replace("<wbr>", ""));
     })
 
@@ -73,8 +69,8 @@ $(document).ready(function() {
     });
 
     socket.on('gameOver', function(){
-        console.log("GAMEOVER");
         $('#playScreen').hide();
+        $('#gameOverScreen .row p:eq(1)').text("You came to sector " + currentLevel);
         $('#gameOverScreen').show();
     });
 
@@ -100,7 +96,7 @@ function leaveRoom(){
 }
 
 function startGame(){
-    socket.emit('startGame');
+    socket.emit('startGame', $('#langSelect').children('option:selected').data('id')); //Sends the id from the language select with it
 }
 
 function toggleSwitchPress(switchID, element){
@@ -175,4 +171,8 @@ function updateCounters(totalCompleted, totalFailed){
         $("#totalFailed").text(totalFailed);
     }
 }
+
+/*$('#langSelect').change(function(){
+    console.log($(this).children('option:selected').data('id'));
+});*/
 

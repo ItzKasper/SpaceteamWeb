@@ -1,0 +1,75 @@
+button, input {
+	margin: 0;
+	width: 100%;
+	font-weight: 700;
+	font-size: 6.5vw;
+}
+
+.roomID {
+	margin-top: 10px;
+	font-size: 20vw;
+	color: #0050d3;
+}
+
+#playerCount {
+	font-size: 10vw;
+	margin-top: -20px;
+}
+
+#transitionScreen div div p {
+	font-size: 16vw;
+	max-width: 80vw;
+	max-height: 80vh;
+	margin: 0 auto;
+}
+
+#playScreen h1 {
+	font-size: 1.6em;
+	margin-top: 1.4vh;
+}
+
+#masterHealth, #playerHealth {
+	margin: 0 auto;
+	margin-top: 2vh;
+}
+
+#taskMSG {
+	font-size: 4vw;
+	margin-top: 1vh;
+}
+
+.boardElement {
+	height: 16.4vh;
+	padding: 5px;
+}
+
+.boardElement div p:nth-of-type(1) {
+	font-size: 3.6vw;
+	margin: 0;
+}
+
+.toggleSwitchImg {
+	width: 80%;
+	max-width: 45vw;
+	height: auto;
+	max-height: 10vh;
+	margin: 0 auto;
+}
+
+.buttonImg {
+	width: 80%;
+	max-width: 45vw;
+	height: 80%;
+	max-height: 9.5vh;
+	margin: 0 auto;
+}
+
+#gameOverScreen div div p {
+	font-size: 15vw;
+}
+
+#gameOverScreen button {
+	height: 10vh;
+}
+
+

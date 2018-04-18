@@ -61,7 +61,8 @@
 		{"displayName": "Simulatie", "id": "simulatie"},
 		{"displayName": "Computer", "id": "computer"},
 		{"displayName": "Audio", "id": "audio"},
-		{"displayName": "Luchtpoort", "id": "luchtpoort"}
+		{"displayName": "Luchtpoort", "id": "luchtpoort"},
+		{"displayName": "Pizza", "id": "pizza"}
 	], 
   "en": [
 	    {"displayName": "Subputty", "id": "subputty"},
@@ -73,7 +74,7 @@
 		{"displayName": "Radio<wbr>cortex", "id": "radiocortex"},
 		{"displayName": "Darkbucket", "id": "darkbucket"},
 		{"displayName": "Flexible <wbr>Steamprobe", "id": "flexible_steamprobe"},
-		{"displayName": "Idiosyncratic <wbr>Photocontrol", "id": "iodiosycratic_photocontrol"},
+		{"displayName": "Syncratic <wbr>Photocontrol", "id": "sycratic_photocontrol"},
 		{"displayName": "Beeping <wbr>Trapezold", "id": "beeping_trapezold"},
 		{"displayName": "Helioscissor <wbr>Scanner", "id": "helioscissor_scanner"},
 		{"displayName": "Superframe", "id": "superframe"},
