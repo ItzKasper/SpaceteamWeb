@@ -164,6 +164,8 @@ io.sockets.on('connection', function(socket){
 					i.state = !i.state;
 				}else if(elementType === "slider"){
 					i.state = data.value;
+				}else if(elementType === "selectionSwitch"){
+					i.state = data.value;
 				}
 
 				var taskCompleted = checkTask(roomID, i.id, i.state); //Check if task is completed
@@ -239,6 +241,12 @@ function updatePlayerCount(roomID, newPlayerCount){
 function leaveRoom(socket){
 	if(PLAYER_DATA[socket.id].room !== null){ //Checks if the player joined any room
 		var roomID = PLAYER_DATA[socket.id].room; //Gets the room id
+		var taskArray = ROOM_LIST[roomID].tasks;
+		for(var i=0;i<taskArray.length;i++){	//Removes the task from that player
+			if(taskArray[i].owner === socket.id){
+				ROOM_LIST[roomID].tasks.splice(i, 1);
+			}
+		}
 		ROOM_LIST[roomID].players.splice(socket.id, 1); //Remove  the player from the player array in the room object
 
 		var playerCount = getPlayersFromRoom(roomID).length; //Gets the length of the array which equals the player count
@@ -301,13 +309,17 @@ function generateBoard(socket, roomID){
 
 		//Select type and option count
 		var rNumber = Math.floor(Math.random() * 100) //Random number between 0 and 100
-		if(rNumber <= 30){
+		if(rNumber <= 25){
 			element.type = "slider";
 			var optionCounts = [3, 4, 6];
 			element.options = optionCounts[Math.floor(Math.random() * 3)]; //Random number between 0 and 2
-		}else if(rNumber > 30 && rNumber <= 65){
+		}else if(rNumber > 25 && rNumber <= 50){
 			element.type = "button";
 			element.options = 1;
+		}else if(rNumber > 50 && rNumber <= 75){
+			element.type = "selectionSwitch";
+			var optionCounts = [3, 6];
+			element.options = optionCounts[Math.floor(Math.random() * 2)];
 		}else{
 			element.type = "switch";
 			element.options = 2;
@@ -381,7 +393,7 @@ function createTask(socket, roomID){
 			task.taskMSG = "Switch off " + displayName;
 			task.requiredState = 0;
 		}
-	}else if(type === "slider"){
+	}else if(type === "slider" || type === "selectionSwitch"){
 		task.requiredState = generateRandomNumberWithException(options, currentState);
 		task.taskMSG = "Set " + displayName + " to " + task.requiredState;
 	}

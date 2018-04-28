@@ -78,6 +78,21 @@
 		{"displayName": "Beeping <wbr>Trapezold", "id": "beeping_trapezold"},
 		{"displayName": "Helioscissor <wbr>Scanner", "id": "helioscissor_scanner"},
 		{"displayName": "Superframe", "id": "superframe"},
-		{"displayName": "Polar <wbr>Wave", "id": "polar_wave"}
+		{"displayName": "Polar <wbr>Wave", "id": "polar_wave"},
+		{"displayName": "Dignitaries", "id": "dignitaries"},
+		{"displayName": "Spacehorn", "id": "spacehorn"},
+		{"displayName": "Onions", "id": "onions"},
+		{"displayName": "Robot <wbr>Uprising", "id": "robot_uprising"},
+		{"displayName": "Disbelief", "id": "disbelief"},
+		{"displayName": "Society", "id": "society"},
+		{"displayName": "Tachyon Adapter", "id": "tachyon_adapter"},
+		{"displayName": "Leftovers", "id": "leftovers"},
+		{"displayName": "Infrared A-spectrum", "id": "infrared_a_spectrum"},
+		{"displayName": "Flushbypass", "id": "flushbypass"},
+		{"displayName": "Lustrous <wbr>Prismneck", "id": "lustrous_prismneck"},
+		{"displayName": "Volatile <wbr>Flushclamp", "id": "volatile_flushclamp"},
+		{"displayName": "Ferrous <wbr>Holospectrum", "id": "ferrous_holospectrum"},
+		{"displayName": "Shockcrane", "id": "schockcrane"},
+		{"displayName": "Evasive <wbr>Maneuvers", "id": "evasive_maneuvers"}
     ]
   }

@@ -217,6 +217,20 @@ input[type=range]:focus::-ms-fill-upper {
 	table-layout: fixed;
 }
 
+.selectionSwitch {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.selectionSwitch div {
+  padding: 0;
+}
+
+.selectionSwitch div button {
+  height: 100%;
+  width: 100%;
+}
+
 #gameOverScreen .row div:nth-of-type(2) p {
 	margin-top: -30px;
 	font-size: 6vw;

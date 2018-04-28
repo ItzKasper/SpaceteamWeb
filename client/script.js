@@ -9,6 +9,7 @@ $(document).ready(function() {
     $('#playScreen').hide(); //Hides the playscreen
     $('#gameOverScreen').hide();
     $('#startGameBTN').hide(); //Hides the start game button, shows it again if host
+    $('#langSelect').hide();
 
     socket.on('newRoomID', function(roomID){
         $('#startScreen').hide();   //Hides the startscreen and shows the waitingscreen
@@ -50,10 +51,17 @@ $(document).ready(function() {
                     if(sliderMarkers === null){
                         sliderMarkers = "<td>" + j + "</td>";
                     }else{
-                        sliderMarkers = sliderMarkers + "<td>" + j + "</td>";
+                        sliderMarkers += "<td>" + j + "</td>";
                     }
                     $('#element'+ (i+1)).html('<div><p>' + element.displayName + '</p><input type="range" min="0" max="' + (element.options - 1) + '" value="0" step="1" onmouseup=\'sliderChange("' + element.id + '",this.value);\' ontouchend=\'sliderChange("' + element.id + '",this.value);\'/><table class="markers"><tr>' + sliderMarkers + '</tr></table></div>');
                 }
+            }else if(element.type === "selectionSwitch"){
+                var innerHTML = '<div><p>' + element.displayName + '</p><div class="row selectionSwitch">';
+                for(var j=0;j<element.options;j++){
+                    innerHTML += '<div class="col-4"><button class="btn-secondary" onClick=\'selectionSwitchChange("' + element.id + '",' + j + ',this.id);\' id="ss_' + element.id + '_' + j + '">' + j + '</button></div>';
+                }
+                innerHTML += '</div>';
+                $('#element' + (i+1)).html(innerHTML);
             }
         } //You don't want to look at this...
     });
@@ -79,6 +87,7 @@ $(document).ready(function() {
 function createRoom(){
 	socket.emit('createRoom');
     $('#startGameBTN').show();
+    $('#langSelect').show();
 }
 
 function joinRoom(){
@@ -132,6 +141,16 @@ function sliderChange(sliderID, newValue){
     socket.emit('elementChange', self);
 }
 
+function selectionSwitchChange(switchID, newValue, elementID){
+    var self = {
+        id: switchID,
+        value: newValue
+    }
+
+    socket.emit('elementChange', self);
+    $('#' + elementID).addClass('active').parent().siblings().children().removeClass('active');
+}
+
 function updateMasterHealth(newHealth){
     if(newHealth < 0){
         $("#masterHealth div").width("0%");
@@ -171,8 +190,4 @@ function updateCounters(totalCompleted, totalFailed){
         $("#totalFailed").text(totalFailed);
     }
 }
-
-/*$('#langSelect').change(function(){
-    console.log($(this).children('option:selected').data('id'));
-});*/
 
